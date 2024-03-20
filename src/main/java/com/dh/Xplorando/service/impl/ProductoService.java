@@ -165,6 +165,25 @@ public class ProductoService implements IProductoService {
         return productoEncontrado;
     }
 
+    @Override
+    public ProductoSalidaDto buscarProductoPorNombre(ProductoEntradaDto productoEntradaDto) throws ResourceNotFoundException {
+
+            String nombreProducto = productoEntradaDto.getNombreProducto();
+            Producto productoPorNombre = productoRepository.findByNombreProducto(nombreProducto);
+
+            ProductoSalidaDto productoEncontrado = null;
+            if (productoPorNombre!= null){
+                productoEncontrado = entidadADto(productoPorNombre);
+                LOGGER.info("Producto encontrado : " + productoPorNombre);
+            } else{
+                LOGGER.info("No se encontró el producto con el nombre : " + nombreProducto);
+                throw new ResourceNotFoundException("No se encontró el producto con el nombre : " + nombreProducto);
+            }
+
+            return productoEncontrado;
+        }
+
+
     private void configureMapping(){
         modelMapper.typeMap(Producto.class, ProductoSalidaDto.class)
                 .addMappings(mapper ->

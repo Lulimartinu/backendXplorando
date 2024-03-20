@@ -13,7 +13,7 @@ import java.util.List;
 public interface IReservaService {
 
     List<ReservaSalidaDto> listarReservas();
-    ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws BadRequestException, ResourceNotFoundException;
+    ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws  ResourceNotFoundException;
     void eliminarReservaPorId(Long id) throws ResourceNotFoundException;
     ReservaSalidaDto buscarReservaPorId(Long id)throws ResourceNotFoundException;
 

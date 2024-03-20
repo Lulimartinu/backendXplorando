@@ -1,6 +1,7 @@
 package com.dh.Xplorando.dto.salida;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,8 @@ public class ReservaSalidaDto {
 
     private LocalDate fechaFinal;
 
-    private String productoNombre;
+    @JsonProperty("producto")
+    private String nombreProducto;
 
 
 }

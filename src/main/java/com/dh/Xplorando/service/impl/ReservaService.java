@@ -50,7 +50,7 @@ public class ReservaService implements IReservaService {
 
 
     @Override
-    public ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws BadRequestException, ResourceNotFoundException {
+    public ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws  ResourceNotFoundException {
         Producto productoBuscado = productoRepository.findById(reservaEntradaDto.getProductoId()).orElse(null);
 
         ReservaSalidaDto reservaGuardadaDto = null;
@@ -60,6 +60,7 @@ public class ReservaService implements IReservaService {
         List<LocalDate> fechaBuscada= new ArrayList<>();
 
 
+        assert productoBuscado != null;
         List<LocalDate>fechasReservadas= productoBuscado.getFechasReservadas();
         if (productoBuscado != null){
             if (fechaFinal.compareTo(fechaInicio) >= 2){
@@ -129,7 +130,7 @@ public class ReservaService implements IReservaService {
     private void configureMapping(){
         modelMapper.typeMap(Producto.class, ReservaSalidaDto.class)
                 .addMappings(mapper ->
-                        mapper.map(Producto:: getNombreProducto, ReservaSalidaDto::setProductoNombre));
+                        mapper.map(Producto:: getNombreProducto, ReservaSalidaDto::setNombreProducto));
     }
 
     public Reserva dtoEntradaAentidad(ReservaEntradaDto reservaEntradaDto){
