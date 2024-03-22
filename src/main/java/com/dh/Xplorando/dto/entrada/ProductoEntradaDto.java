@@ -37,9 +37,9 @@ public class ProductoEntradaDto {
     @NotNull(message = "El precio no puede ser nulo")
     private double precioProducto;
 
-    @NotNull(message = "La direccion no puede ser nula")
-    @NotBlank(message = "Debe completar con una direaccion")
-    private String direccion;
+    @NotNull(message = "La ubicación no puede ser nula")
+    @NotBlank(message = "Debe completar con una ubicación")
+    private String ubicacion;
 
     private List<ImagenEntradaDto> imagenes;
 

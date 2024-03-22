@@ -20,4 +20,5 @@ public interface IProductoService {
     ProductoSalidaDto buscarProductoPorId(Long id)throws ResourceNotFoundException;
     ProductoSalidaDto buscarProductoPorNombre(ProductoEntradaDto productoEntradaDto) throws ResourceNotFoundException;
 
+    ProductoSalidaDto buscarProductoPorUbicacion(ProductoEntradaDto productoEntradaDto) throws  ResourceNotFoundException;
 }

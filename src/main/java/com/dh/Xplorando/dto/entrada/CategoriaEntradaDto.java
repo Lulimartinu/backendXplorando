@@ -23,5 +23,8 @@ public class CategoriaEntradaDto {
     @NotNull(message = "El nombre no puede ser nulo")
     @NotBlank(message = "Debe completar con un nombre de Categoria")
     private String nombreCategoria;
+    @NotNull(message = "La imagen no puede ser nulo")
+    @NotBlank(message = "Debe completar con una imagen")
+    private String imagenCategoria;
 
 }

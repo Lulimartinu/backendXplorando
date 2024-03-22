@@ -38,7 +38,7 @@ public class ProductoModificacionEntrada {
     private double precioProducto;
 
     @NotNull()
-    private String direccion;
+    private String ubicacion;
 
     private List<ImagenEntradaDto> imagenes;
     @NotNull(message = "El nombre de la categoría no puede ser nulo")

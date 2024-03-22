@@ -66,8 +66,13 @@ public class ProductoController {
         return new ResponseEntity<>(productoService.buscarProductoPorId(id), HttpStatus.OK);
     }
     @GetMapping("/buscarProductoPorNombre/{nombreProducto}")
-    public ResponseEntity<ProductoSalidaDto>buscarProductoPorNombre(@Valid @RequestBody ProductoEntradaDto productoEntradaDto) throws ResourceNotFoundException {
+    public ResponseEntity<ProductoSalidaDto>buscarProductoPorNombre(@PathVariable String nombreProducto,@RequestBody ProductoEntradaDto productoEntradaDto) throws ResourceNotFoundException {
         return new ResponseEntity<>(productoService.buscarProductoPorNombre(productoEntradaDto), HttpStatus.OK);
+    }
+
+    @GetMapping("/buscarProductoPorUbicacion/{ubicacion}")
+    public ResponseEntity<ProductoSalidaDto>buscarProductoPorUbicacion(@PathVariable String ubicacion, @RequestBody ProductoEntradaDto productoEntradaDto) throws ResourceNotFoundException {
+        return new ResponseEntity<>(productoService.buscarProductoPorUbicacion(productoEntradaDto), HttpStatus.OK);
     }
 
 

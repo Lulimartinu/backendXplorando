@@ -7,7 +7,6 @@ import com.dh.Xplorando.security.user.UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -58,7 +57,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers("/auth/**", "/roles/create-new-role","/users/**", "/productos/listar","/categorias/listar","/caracteristicas/listar","/reservas/**" ,"/swagger-ui/*", "/v3/api-docs/*", "/swagger-ui.html").permitAll()// Permitir acceso sin autenticación a URLs específicas
+                        .requestMatchers("/auth/**", "/roles/create-new-role","/users/**", "/productos/**","/categorias/listar","/caracteristicas/listar","/reservas/**" ,"/swagger-ui/*", "/v3/api-docs/*", "/swagger-ui.html").permitAll()// Permitir acceso sin autenticación a URLs específicas
 
                         .requestMatchers("/auth/**","/roles/**","/users/**","/productos/**","/reservas/listar","/imagenes/**", "/reservas/**","/categorias/**","/caracteristicas/**").hasRole("ADMIN")// Requiere rol ADMIN para URLs específicas
 

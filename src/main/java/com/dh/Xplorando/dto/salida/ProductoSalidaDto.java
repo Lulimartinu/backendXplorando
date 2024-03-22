@@ -32,7 +32,7 @@ public class ProductoSalidaDto {
 
     private double precioProducto;
 
-    private String direccion;
+    private String ubicacion;
 
     private List<ImagenSalidaDto> imagenSalidaDtoList;
 

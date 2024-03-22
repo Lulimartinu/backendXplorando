@@ -14,8 +14,6 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-
-
 @Entity
 @Table(name="PRODUCTOS")
 public class Producto {
@@ -30,8 +28,8 @@ public class Producto {
     private String descripcionProducto;
     @Column(name="PRECIO")
     private double precioProducto;
-    @Column(name="DIRECCION")
-    private String direccion;
+    @Column(name="UBICACION")
+    private String ubicacion;
 
     @OneToMany(mappedBy ="producto", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Imagen> imagenes ;

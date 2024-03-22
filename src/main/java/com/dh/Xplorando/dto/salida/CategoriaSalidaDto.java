@@ -20,5 +20,6 @@ public class CategoriaSalidaDto {
 
     private String nombreCategoria;
 
+    private String imagenCategoria;
 
 }

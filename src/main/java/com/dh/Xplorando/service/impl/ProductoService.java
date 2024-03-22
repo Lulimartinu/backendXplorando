@@ -129,7 +129,7 @@ public class ProductoService implements IProductoService {
         productoExistente.setNombreProducto(productoModificacionEntradaDto.getNombreProducto());
         productoExistente.setDescripcionProducto(productoModificacionEntradaDto.getDescripcionProducto());
         productoExistente.setPrecioProducto(productoModificacionEntradaDto.getPrecioProducto());
-        productoExistente.setDireccion(productoModificacionEntradaDto.getDireccion());
+        productoExistente.setUbicacion(productoModificacionEntradaDto.getUbicacion());
         productoExistente.setCategoria(categoria);  // Actualizar la categoría
 
         // Guardar el producto modificado
@@ -189,6 +189,24 @@ public class ProductoService implements IProductoService {
 
             return productoEncontrado;
         }
+
+    @Override
+    public ProductoSalidaDto buscarProductoPorUbicacion(ProductoEntradaDto productoEntradaDto) throws ResourceNotFoundException {
+
+        String ubicacion = productoEntradaDto.getUbicacion();
+        Producto productoPorUbicacion = productoRepository.findByUbicacion(ubicacion);
+
+        ProductoSalidaDto productoEncontrado = null;
+        if (productoPorUbicacion!= null){
+            productoEncontrado = entidadADto(productoPorUbicacion);
+            LOGGER.info("Producto encontrado : " + productoPorUbicacion);
+        } else{
+            LOGGER.info("No se encontró el producto con la ubicación : " + ubicacion);
+            throw new ResourceNotFoundException("No se encontró el producto con la ubicación : " + ubicacion);
+        }
+
+        return productoEncontrado;
+    }
 
 
     private void configureMapping(){
