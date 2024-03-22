@@ -148,6 +148,13 @@ public class ProductoService implements IProductoService {
 
     @Override
     public void eliminarProductoPorId(Long id) throws ResourceNotFoundException {
+        Producto productoBuscado = productoRepository.findById(id).orElse(null);
+        if (productoBuscado !=null){
+            productoRepository.deleteById(id);
+            LOGGER.warn("Se eliminó el producto con id: " + productoBuscado);
+        } else
+            throw new ResourceNotFoundException("No se encontró el producto en la base de datos");
+        LOGGER.error("No se encontró el producto en la base de datos");
 
     }
 
