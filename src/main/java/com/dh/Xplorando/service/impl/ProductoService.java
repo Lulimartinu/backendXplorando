@@ -222,7 +222,7 @@ public class ProductoService implements IProductoService {
 
     @Override
     public ProductoSalidaDto buscarProductoDisponible(ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
-        Producto productoBuscado = productoRepository.findByNombreProducto(productoDisponibleEntradaDto.getNombreP());
+        Producto productoBuscado = productoRepository.findByUbicacion(productoDisponibleEntradaDto.getUbicacionP());
         LocalDate fechaInicio = productoDisponibleEntradaDto.getFechaInicio();
         LocalDate fechaFinal = productoDisponibleEntradaDto.getFechaFinal();
 

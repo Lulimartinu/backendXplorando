@@ -20,7 +20,7 @@ public class ProductoDisponibleEntradaDto {
 
     @NotNull(message = "El nombre no puede ser nulo")
     @NotBlank(message ="Debe completar con un nombre" )
-    private String nombreP;
+    private String ubicacionP;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @FutureOrPresent(message = "Ingrese una fecha correcta. No puede ingresar una fecha anterior al día de hoy")
     @NotNull(message = "Ingrese una fecha de inicio")
