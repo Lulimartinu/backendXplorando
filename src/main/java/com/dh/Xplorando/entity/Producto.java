@@ -3,7 +3,6 @@ package com.dh.Xplorando.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.dao.DataIntegrityViolationException;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -57,6 +56,5 @@ public class Producto {
     @OneToMany(mappedBy = "producto",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<Reserva> reservas =new HashSet<>();
     private List<LocalDate> fechasReservadas = new ArrayList<>();
-
 
 }

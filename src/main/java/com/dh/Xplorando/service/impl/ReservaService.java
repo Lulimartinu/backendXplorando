@@ -130,7 +130,7 @@ public class ReservaService implements IReservaService {
     private void configureMapping(){
         modelMapper.typeMap(Producto.class, ReservaSalidaDto.class)
                 .addMappings(mapper ->
-                        mapper.map(Producto:: getNombreProducto, ReservaSalidaDto::setNombreProducto));
+                        mapper.map(Producto:: getNombreProducto, ReservaSalidaDto::setNombreP));
     }
 
     public Reserva dtoEntradaAentidad(ReservaEntradaDto reservaEntradaDto){

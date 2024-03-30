@@ -25,7 +25,7 @@ public class ReservaSalidaDto {
     private LocalDate fechaFinal;
 
     @JsonProperty("producto")
-    private String nombreProducto;
+    private String nombreP;
 
 
 }

@@ -1,6 +1,7 @@
 package com.dh.Xplorando.service.impl;
 
 import com.dh.Xplorando.dto.entrada.ImagenEntradaDto;
+import com.dh.Xplorando.dto.entrada.ProductoDisponibleEntradaDto;
 import com.dh.Xplorando.dto.entrada.ProductoEntradaDto;
 import com.dh.Xplorando.dto.entrada.modificacion.ProductoModificacionEntrada;
 import com.dh.Xplorando.dto.salida.*;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -208,6 +210,54 @@ public class ProductoService implements IProductoService {
         return productoEncontrado;
     }
 
+    private boolean buscadorProductoPorFecha(Producto producto, LocalDate fechaInicio, LocalDate fechaFinal){
+        for( LocalDate fecha = fechaInicio; !fecha.isAfter(fechaFinal); fecha = fecha.plusDays(1)){
+            if( producto.getFechasReservadas().contains(fecha)){
+                LOGGER.info("La fecha: "+ fecha+" hasta la fecha " + fechaFinal + " se encuentra reservada");
+                return false; //el producto no está disponible para las fechas buscadas
+            }
+        }
+        return true;
+        }
+
+    @Override
+    public ProductoSalidaDto buscarProductoDisponible(ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
+        Producto productoBuscado = productoRepository.findByNombreProducto(productoDisponibleEntradaDto.getNombreP());
+        LocalDate fechaInicio = productoDisponibleEntradaDto.getFechaInicio();
+        LocalDate fechaFinal = productoDisponibleEntradaDto.getFechaFinal();
+
+        ProductoSalidaDto productoDisponibleSalidaDto= null;
+
+        List<LocalDate> fechaBuscada= new ArrayList<>();//inicio una lista para completar las fechas buscadas por el usuario
+
+        List<LocalDate>fechasReservadas= productoBuscado.getFechasReservadas();//traigo la lista de fechas reservadas del producto
+
+        if (productoBuscado != null){
+            if (fechaFinal.compareTo(fechaInicio) >= 2) {
+                while (!fechaInicio.isAfter(fechaFinal)) {
+                    fechaBuscada.add(fechaInicio);
+                    fechaInicio = fechaInicio.plusDays(1);
+                }
+                for (LocalDate fecha : fechaBuscada) {
+                    LOGGER.info("Fecha" + fecha);
+                    if (fechasReservadas.contains(fecha)) {
+                        LOGGER.error("la fecha" + fecha + "se encuentra reseravda");
+                        throw new ResourceNotFoundException("La fecha" + fecha + "ya se encuentra reservada");
+                    }
+                }
+                LOGGER.info("El producto se encuentra disponible para reservar en las fechas:" + fechaBuscada);
+                productoDisponibleSalidaDto = entidadADto(productoBuscado);
+            } else {
+                LOGGER.error("La fecha de reserva debe ser mayor a 48hs");
+                throw  new ResourceNotFoundException("La fecha de reserva debe ser mayor a 48hs");
+            }
+        }
+        else {
+            LOGGER.error("El producto no existe en la BDD");
+            throw  new ResourceNotFoundException("El producto no existe en la BDD");
+        }
+        return productoDisponibleSalidaDto;
+    }
 
     private void configureMapping(){
         modelMapper.typeMap(Producto.class, ProductoSalidaDto.class)

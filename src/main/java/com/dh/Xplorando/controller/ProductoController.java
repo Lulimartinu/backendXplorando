@@ -1,5 +1,6 @@
 package com.dh.Xplorando.controller;
 
+import com.dh.Xplorando.dto.entrada.ProductoDisponibleEntradaDto;
 import com.dh.Xplorando.dto.entrada.ProductoEntradaDto;
 import com.dh.Xplorando.dto.entrada.modificacion.ProductoModificacionEntrada;
 import com.dh.Xplorando.dto.salida.ProductoSalidaDto;
@@ -75,6 +76,9 @@ public class ProductoController {
         return new ResponseEntity<>(productoService.buscarProductoPorUbicacion(productoEntradaDto), HttpStatus.OK);
     }
 
-
+    @GetMapping("/buscarProductoDisponible")
+    public ResponseEntity<ProductoSalidaDto>buscarProductoDisponible(@Valid @RequestBody ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
+        return new ResponseEntity<>(productoService.buscarProductoDisponible(productoDisponibleEntradaDto), HttpStatus.OK);
+    }
 }
 
