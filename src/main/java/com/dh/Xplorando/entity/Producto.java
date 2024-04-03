@@ -57,6 +57,7 @@ public class Producto {
     private Set<Reserva> reservas =new HashSet<>();
 
     @Column(name="FECHASRESERVADAS")
+
     private List<LocalDate> fechasReservadas = new ArrayList<>();
 
 }

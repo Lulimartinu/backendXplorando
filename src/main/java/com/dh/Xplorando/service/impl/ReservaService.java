@@ -18,6 +18,7 @@ import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,19 +53,95 @@ public class ReservaService implements IReservaService {
         LOGGER.info("Listado de todas las reservas : " + reservas);
         return reservasSalidaDtoList;
     }
+    public boolean buscarReservaPorProducto(ReservaEntradaDto reservaEntradaDto) throws ResourceNotFoundException {
+        Producto productoBuscado = productoRepository.findById(reservaEntradaDto.getProductoId()).orElse(null);
 
+        LocalDate fechaInicio = reservaEntradaDto.getFechaInicio();
+        LocalDate fechaFinal = reservaEntradaDto.getFechaFinal();
+        //List<LocalDate> fechasBuscadas = new ArrayList<>();
+        List<LocalDate> fechasReservadas = productoBuscado.getFechasReservadas();
+
+
+        if (productoBuscado == null) {
+            LOGGER.error("El producto no existe en la BDD");
+            throw new ResourceNotFoundException("El producto no existe en la BDD");
+        }
+
+        if (ChronoUnit.DAYS.between(fechaInicio, fechaFinal) < 2) {
+            LOGGER.error("La fecha de reserva debe ser mayor a 48hs");
+            throw new ResourceNotFoundException("La fecha de reserva debe ser mayor a 48hs");
+        }
+
+        for (LocalDate fecha = fechaInicio; !fecha.isAfter(fechaFinal); fecha = fecha.plusDays(1)) {
+            if (fechasReservadas.contains(fecha)) {
+
+                LOGGER.info("La fecha: " + fecha + " ya se encuentra reservada");
+                throw new ResourceNotFoundException("La fecha: " + fecha + " ya se encuentra reservada");
+
+            }
+        }
+
+        LOGGER.info("El producto se encuentra disponible para las fechas buscadas: de " + fechaInicio + " a " + fechaFinal + " " + productoBuscado.getNombreProducto());
+        return true;
+    }
 
     @Override
-    public ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws  ResourceNotFoundException {
-
+    public ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws ResourceNotFoundException {
         Producto producto = productoRepository.findById(reservaEntradaDto.getProductoId()).orElse(null);
         User user = userRepository.findById(reservaEntradaDto.getUserId()).orElse(null);
 
+        if (producto == null || user == null) {
+            LOGGER.error("El producto o el usuario no existen en la base de datos");
+            throw new ResourceNotFoundException("El producto o el usuario no existen en la base de datos");
+        }
+
+        LocalDate fechaInicio = reservaEntradaDto.getFechaInicio();
+        LocalDate fechaFinal = reservaEntradaDto.getFechaFinal();
+
+        if (ChronoUnit.DAYS.between(fechaInicio, fechaFinal) < 2) {
+            LOGGER.error("La fecha de reserva debe ser mayor o igual a 48 horas");
+            throw new ResourceNotFoundException("La fecha de reserva debe ser mayor o igual a 48 horas");
+        }
+
+        List<LocalDate> fechasReservadas = producto.getFechasReservadas();
+        List<LocalDate> fechaBuscada = new ArrayList<>();
+        LocalDate fecha = fechaInicio;
+
+        while (!fecha.isAfter(fechaFinal)) {
+            fechaBuscada.add(fecha);
+            fecha = fecha.plusDays(1);
+        }
+
+        for (LocalDate fechaReservada : fechaBuscada) {
+            if (fechasReservadas.contains(fechaReservada)) {
+                LOGGER.error("El paquete en la fecha " + fechaReservada + " ya se encuentra reservado");
+                throw new ResourceNotFoundException("El paquete en la fecha " + fechaReservada + " ya se encuentra reservado");
+            } else {
+                fechasReservadas.add(fechaReservada);
+            }
+        }
+
+        Reserva reservaRecibida = modelMapper.map(reservaEntradaDto, Reserva.class);
+        reservaRecibida.setProducto(producto);
+        reservaRecibida.setUser(user);
+
+        Reserva reservaCreada = reservaRepository.save(reservaRecibida);
+        ReservaSalidaDto reservaCreadaDto = entidadAdtoSalida(reservaCreada);
+
+        LOGGER.info("Reserva realizada con éxito: " + reservaRecibida);
+
+        return reservaCreadaDto;
+    }
+
+
+
+      /*  Producto producto = productoRepository.findById(reservaEntradaDto.getProductoId()).orElse(null);
+        User user = userRepository.findById(reservaEntradaDto.getUserId()).orElse(null);
+
         ReservaSalidaDto reservaCreadaDto = null;
-
-
         LocalDate fechaInicio= reservaEntradaDto.getFechaInicio();
         LocalDate fechaFinal= reservaEntradaDto.getFechaFinal();
+
         List<LocalDate> fechaBuscada= new ArrayList<>();
 
         List<LocalDate>fechasReservadas= producto.getFechasReservadas();
@@ -73,11 +150,11 @@ public class ReservaService implements IReservaService {
         if (producto != null && user != null) {
 
             if (fechaFinal.compareTo(fechaInicio) >= 2) {
-                while (!fechaInicio.isAfter(fechaFinal)) {
 
+               while (!fechaInicio.isAfter(fechaFinal)) {
                     fechaBuscada.add(fechaInicio);
+                   //agrega un dia a la fecha especificada en cada iteración
                      fechaInicio = fechaInicio.plusDays(1);
-                     //agrega un dia a la fecha especificada
                    //  producto.getFechasReservadas().add(fechaInicio);
 
                 }
@@ -100,7 +177,7 @@ public class ReservaService implements IReservaService {
                 //guardo la reserva
                 Reserva reservaCreada = reservaRepository.save(reservaRecibida);
                 reservaCreadaDto = entidadAdtoSalida(reservaCreada);
-                LOGGER.info("Reserva realizada con exito: {} " + reservaRecibida);
+                LOGGER.info("Reserva realizada con exito:  " + reservaRecibida);
 
             }
              else {
@@ -114,8 +191,10 @@ public class ReservaService implements IReservaService {
         }
 
 
-        return reservaCreadaDto;
-    }
+        return reservaCreadaDto;*/
+
+
+
 
 
 

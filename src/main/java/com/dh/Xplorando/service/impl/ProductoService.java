@@ -221,7 +221,8 @@ public class ProductoService implements IProductoService {
         return true;
         }*/
 
-    @Override
+
+   @Override
     public ProductoSalidaDto buscarProductoDisponible(ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
         Producto productoBuscado = productoRepository.findByUbicacion(productoDisponibleEntradaDto.getUbicacionP());
         LocalDate fechaInicio = productoDisponibleEntradaDto.getFechaInicio();
@@ -259,6 +260,9 @@ public class ProductoService implements IProductoService {
         }
         return productoDisponibleSalidaDto;
     }
+
+
+
 
     private void configureMapping(){
         modelMapper.typeMap(Producto.class, ProductoSalidaDto.class)
@@ -320,5 +324,8 @@ public class ProductoService implements IProductoService {
     }
 
 }
+
+
+
 
 
