@@ -21,3 +21,4 @@ public interface ICategoriaService {
     CategoriaSalidaDto buscarCategoriaPorNombre(CategoriaEntradaDto categoriaEntradaDto) throws ResourceNotFoundException;
 
 }
+

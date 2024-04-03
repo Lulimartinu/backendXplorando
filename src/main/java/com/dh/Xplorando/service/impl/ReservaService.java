@@ -14,6 +14,7 @@ import com.dh.Xplorando.service.IReservaService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,7 +36,7 @@ public class ReservaService implements IReservaService {
         this.userRepository = userRepository;
         this.reservaRepository = reservaRepository;
         this.modelMapper = modelMapper;
-        //  configureMapping();
+        configureMapping();
     }
 
     @Override
@@ -55,58 +56,65 @@ public class ReservaService implements IReservaService {
 
     @Override
     public ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws  ResourceNotFoundException {
-        Producto productoBuscado = productoRepository.findById(reservaEntradaDto.getProductoId()).orElse(null);
-        User userBuscado = userRepository.findById(reservaEntradaDto.getUserId()).orElse(null);
 
-        ReservaSalidaDto reservaGuardadaDto = null;
+        Producto producto = productoRepository.findById(reservaEntradaDto.getProductoId()).orElse(null);
+        User user = userRepository.findById(reservaEntradaDto.getUserId()).orElse(null);
+
+        ReservaSalidaDto reservaCreadaDto = null;
+
 
         LocalDate fechaInicio= reservaEntradaDto.getFechaInicio();
         LocalDate fechaFinal= reservaEntradaDto.getFechaFinal();
         List<LocalDate> fechaBuscada= new ArrayList<>();
 
-
-        assert productoBuscado != null;
-        List<LocalDate>fechasReservadas= productoBuscado.getFechasReservadas();
+        List<LocalDate>fechasReservadas= producto.getFechasReservadas();
 
 
-        if (productoBuscado != null && userBuscado != null){
+        if (producto != null && user != null) {
 
-            if (fechaFinal.compareTo(fechaInicio) >= 2){
-                while (!fechaInicio.isAfter(fechaFinal)){
+            if (fechaFinal.compareTo(fechaInicio) >= 2) {
+                while (!fechaInicio.isAfter(fechaFinal)) {
 
                     fechaBuscada.add(fechaInicio);
-                    fechaInicio = fechaInicio.plusDays(1);
-                  //  productoBuscado.getFechasReservadas().add(fechaInicio);
+                     fechaInicio = fechaInicio.plusDays(1);
+                     //agrega un dia a la fecha especificada
+                   //  producto.getFechasReservadas().add(fechaInicio);
 
                 }
-                for (LocalDate fecha: fechaBuscada){
+                for (LocalDate fecha : fechaBuscada) {
                     LOGGER.info("Fecha" + fecha);
-                    if (fechasReservadas.contains(fecha)){
+                    if (fechasReservadas.contains(fecha)) {
                         LOGGER.error("el paquete en la fecha " + fecha + " ya se encuentra reservado");
                         throw new ResourceNotFoundException("el paquete en la fecha" + fecha + "ya se encuentra reservado");
-                    }else {
+                    } else {
                         fechasReservadas.add(fecha);
                     }
                 }
 
-                Reserva reservaRecibida = dtoEntradaAentidad(reservaEntradaDto);
-                reservaRecibida.setProducto(productoBuscado);
-                reservaRecibida.setUser(userBuscado);
+                //seteo a la reserva el producto y user
+                Reserva reservaRecibida = modelMapper.map(reservaEntradaDto, Reserva.class);
+                reservaRecibida.setProducto(producto);
+                reservaRecibida.setUser(user);
 
-                Reserva reservaGuardada = reservaRepository.save(reservaRecibida);
-                reservaGuardadaDto = entidadAdtoSalida(reservaGuardada);
-                LOGGER.info("Reserva realizada con exito: " + reservaRecibida);
+
+                //guardo la reserva
+                Reserva reservaCreada = reservaRepository.save(reservaRecibida);
+                reservaCreadaDto = entidadAdtoSalida(reservaCreada);
+                LOGGER.info("Reserva realizada con exito: {} " + reservaRecibida);
+
             }
-            else {
+             else {
                 LOGGER.error("La fecha de reserva debe ser mayor a 48hs");
-                throw  new ResourceNotFoundException("La fecha de reserva debe ser mayor a 48hs");
+                throw new ResourceNotFoundException("La fecha de reserva debe ser mayor a 48hs");
             }
         }
         else {
             LOGGER.error("El producto no existe en la BDD");
             throw  new ResourceNotFoundException("El producto no existe en la BDD");
         }
-        return reservaGuardadaDto;
+
+
+        return reservaCreadaDto;
     }
 
 
@@ -156,7 +164,23 @@ public class ReservaService implements IReservaService {
     }
 
     public ReservaSalidaDto entidadAdtoSalida(Reserva reserva){
-        return modelMapper.map(reserva, ReservaSalidaDto.class);
+        ReservaSalidaDto reservaSalidaDto = modelMapper.map(reserva, ReservaSalidaDto.class);
+
+        //mapeo el producto si existe
+        if(reserva.getProducto() != null){
+          ProductoSalidaDto productoSalidaDto = modelMapper.map(reserva.getProducto(), ProductoSalidaDto.class);
+          reservaSalidaDto.setNombreP(productoSalidaDto.getNombreProducto());
+        }
+
+        //mapeo el usuario si existe
+        if(reserva.getUser() != null ){
+            User user = modelMapper.map(reserva.getUser(), User.class);
+            reservaSalidaDto.setUserFirstName(user.getFirstName());
+
+        }
+
+        return reservaSalidaDto;
+        //return modelMapper.map(reserva, ReservaSalidaDto.class);
     }
 
 

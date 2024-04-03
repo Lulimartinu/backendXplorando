@@ -55,6 +55,8 @@ public class Producto {
 
     @OneToMany(mappedBy = "producto",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<Reserva> reservas =new HashSet<>();
+
+    @Column(name="FECHASRESERVADAS")
     private List<LocalDate> fechasReservadas = new ArrayList<>();
 
 }
