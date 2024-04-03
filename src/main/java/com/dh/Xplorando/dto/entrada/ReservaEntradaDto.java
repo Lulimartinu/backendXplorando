@@ -37,5 +37,8 @@ public class ReservaEntradaDto {
     @NotNull(message = "Ingrese un Producto")
     private Long productoId;
 
+    @NotNull(message = "Debe estar logueado a un usuario")
+    private Long userId;
+
 
 }

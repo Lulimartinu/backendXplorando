@@ -1,14 +1,16 @@
 package com.dh.Xplorando.service.impl;
 
 import com.dh.Xplorando.dto.entrada.ReservaEntradaDto;
+import com.dh.Xplorando.dto.salida.ProductoSalidaDto;
 import com.dh.Xplorando.dto.salida.ReservaSalidaDto;
 import com.dh.Xplorando.entity.Producto;
 import com.dh.Xplorando.entity.Reserva;
+import com.dh.Xplorando.entity.User;
 import com.dh.Xplorando.exceptions.ResourceNotFoundException;
 import com.dh.Xplorando.repository.ProductoRepository;
 import com.dh.Xplorando.repository.ReservaRepository;
+import com.dh.Xplorando.repository.UserRepository;
 import com.dh.Xplorando.service.IReservaService;
-import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +22,17 @@ import java.util.List;
 
 @Service
 public class ReservaService implements IReservaService {
-    private final Logger LOGGER = LoggerFactory.getLogger(ImagenService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ReservaService.class);
     private final ProductoRepository productoRepository;
+    private final UserRepository userRepository;
 
     private final ReservaRepository reservaRepository;
 
     private final ModelMapper modelMapper;
 
-    public ReservaService(ProductoRepository productoRepository, ReservaRepository reservaRepository, ModelMapper modelMapper) {
+    public ReservaService(ProductoRepository productoRepository, UserRepository userRepository, ReservaRepository reservaRepository, ModelMapper modelMapper) {
         this.productoRepository = productoRepository;
+        this.userRepository = userRepository;
         this.reservaRepository = reservaRepository;
         this.modelMapper = modelMapper;
         //  configureMapping();
@@ -52,6 +56,7 @@ public class ReservaService implements IReservaService {
     @Override
     public ReservaSalidaDto crearReserva(ReservaEntradaDto reservaEntradaDto) throws  ResourceNotFoundException {
         Producto productoBuscado = productoRepository.findById(reservaEntradaDto.getProductoId()).orElse(null);
+        User userBuscado = userRepository.findById(reservaEntradaDto.getUserId()).orElse(null);
 
         ReservaSalidaDto reservaGuardadaDto = null;
 
@@ -62,11 +67,17 @@ public class ReservaService implements IReservaService {
 
         assert productoBuscado != null;
         List<LocalDate>fechasReservadas= productoBuscado.getFechasReservadas();
-        if (productoBuscado != null){
+
+
+        if (productoBuscado != null && userBuscado != null){
+
             if (fechaFinal.compareTo(fechaInicio) >= 2){
                 while (!fechaInicio.isAfter(fechaFinal)){
+
                     fechaBuscada.add(fechaInicio);
                     fechaInicio = fechaInicio.plusDays(1);
+                  //  productoBuscado.getFechasReservadas().add(fechaInicio);
+
                 }
                 for (LocalDate fecha: fechaBuscada){
                     LOGGER.info("Fecha" + fecha);
@@ -80,6 +91,7 @@ public class ReservaService implements IReservaService {
 
                 Reserva reservaRecibida = dtoEntradaAentidad(reservaEntradaDto);
                 reservaRecibida.setProducto(productoBuscado);
+                reservaRecibida.setUser(userBuscado);
 
                 Reserva reservaGuardada = reservaRepository.save(reservaRecibida);
                 reservaGuardadaDto = entidadAdtoSalida(reservaGuardada);
@@ -96,6 +108,8 @@ public class ReservaService implements IReservaService {
         }
         return reservaGuardadaDto;
     }
+
+
 
     @Override
     public void eliminarReservaPorId(Long id) throws ResourceNotFoundException {
@@ -125,12 +139,16 @@ public class ReservaService implements IReservaService {
         return reservaEncontrada;
     }
 
-
-
     private void configureMapping(){
         modelMapper.typeMap(Producto.class, ReservaSalidaDto.class)
                 .addMappings(mapper ->
-                        mapper.map(Producto:: getNombreProducto, ReservaSalidaDto::setNombreP));
+
+                    mapper.map(Producto::getNombreProducto, ReservaSalidaDto::setNombreP)
+                );
+
+        modelMapper.typeMap(User.class, ReservaSalidaDto.class).addMappings(mapper ->{
+            mapper.map(User::getFirstName, ReservaSalidaDto::setUserFirstName);
+        });
     }
 
     public Reserva dtoEntradaAentidad(ReservaEntradaDto reservaEntradaDto){

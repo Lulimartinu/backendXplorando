@@ -24,7 +24,7 @@ public class ReservaController {
         this.iReservaService = iReservaService;
     }
     @PostMapping("/crear")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     public ResponseEntity<ReservaSalidaDto> crearReserva(@Valid @RequestBody ReservaEntradaDto reservaEntradaDto) throws
             ResourceNotFoundException, ResourceNotFoundException, BadRequestException {
         return new ResponseEntity<>(iReservaService.crearReserva(reservaEntradaDto) , HttpStatus.CREATED);
@@ -33,6 +33,12 @@ public class ReservaController {
     @GetMapping("/listar")
     public ResponseEntity<List<ReservaSalidaDto>> listarReservas(){
         return new ResponseEntity<>(iReservaService.listarReservas(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<String>eliminarReservaPorId(@PathVariable Long id ) throws ResourceNotFoundException {
+        iReservaService.eliminarReservaPorId(id);
+        return new ResponseEntity<>("Reserva eliminada correctamente", HttpStatus.NO_CONTENT);
     }
 
 

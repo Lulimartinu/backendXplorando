@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+
 @Table(name = "reservas")
 public class Reserva {
 
@@ -28,11 +29,10 @@ public class Reserva {
     @JsonIgnore
     private Producto producto;
 
-    /*
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonIgnore
     private User user;
-       */
+
 
 }

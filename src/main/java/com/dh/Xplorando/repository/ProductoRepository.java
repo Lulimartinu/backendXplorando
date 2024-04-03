@@ -15,6 +15,9 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     Producto findByUbicacion(String ubicacion);
 
+   Optional<Producto> findById(Long productoId);
+
+
     //Optional<List<Producto>> findProductoXFechas(LocalDate fechaInicio, LocalDate fechaFinal, Long id);
 
 }

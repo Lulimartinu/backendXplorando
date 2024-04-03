@@ -27,5 +27,7 @@ public class ReservaSalidaDto {
     @JsonProperty("producto")
     private String nombreP;
 
+    @JsonProperty("user")
+    private String userFirstName;
 
 }

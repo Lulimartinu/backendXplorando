@@ -210,7 +210,7 @@ public class ProductoService implements IProductoService {
         return productoEncontrado;
     }
 
-    private boolean buscadorProductoPorFecha(Producto producto, LocalDate fechaInicio, LocalDate fechaFinal){
+   /* private boolean buscadorProductoPorFecha(Producto producto, LocalDate fechaInicio, LocalDate fechaFinal){
         for( LocalDate fecha = fechaInicio; !fecha.isAfter(fechaFinal); fecha = fecha.plusDays(1)){
             if( producto.getFechasReservadas().contains(fecha)){
                 LOGGER.info("La fecha: "+ fecha+" hasta la fecha " + fechaFinal + " se encuentra reservada");
@@ -218,7 +218,7 @@ public class ProductoService implements IProductoService {
             }
         }
         return true;
-        }
+        }*/
 
     @Override
     public ProductoSalidaDto buscarProductoDisponible(ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
@@ -228,9 +228,9 @@ public class ProductoService implements IProductoService {
 
         ProductoSalidaDto productoDisponibleSalidaDto= null;
 
-        List<LocalDate> fechaBuscada= new ArrayList<>();//inicio una lista para completar las fechas buscadas por el usuario
+        List<LocalDate> fechaBuscada= new ArrayList<>();
 
-        List<LocalDate>fechasReservadas= productoBuscado.getFechasReservadas();//traigo la lista de fechas reservadas del producto
+        List<LocalDate>fechasReservadas= productoBuscado.getFechasReservadas();
 
         if (productoBuscado != null){
             if (fechaFinal.compareTo(fechaInicio) >= 2) {
