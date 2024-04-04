@@ -77,7 +77,7 @@ public class ProductoController {
     }
 
     @GetMapping("/buscarProductoDisponible")
-    public ResponseEntity<ProductoSalidaDto>buscarProductoDisponible(@Valid @RequestBody ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
+    public ResponseEntity<List<ProductoSalidaDto>>buscarProductoDisponible(@Valid @RequestBody ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
         return new ResponseEntity<>(productoService.buscarProductoDisponible(productoDisponibleEntradaDto), HttpStatus.OK);
     }
 }

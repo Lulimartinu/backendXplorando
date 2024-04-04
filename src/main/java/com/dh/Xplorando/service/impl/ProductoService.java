@@ -20,11 +20,11 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -211,7 +211,7 @@ public class ProductoService implements IProductoService {
         return productoEncontrado;
     }
 
-   /* private boolean buscadorProductoPorFecha(Producto producto, LocalDate fechaInicio, LocalDate fechaFinal){
+   private boolean buscadorProductoPorFecha(Producto producto, LocalDate fechaInicio, LocalDate fechaFinal){
         for( LocalDate fecha = fechaInicio; !fecha.isAfter(fechaFinal); fecha = fecha.plusDays(1)){
             if( producto.getFechasReservadas().contains(fecha)){
                 LOGGER.info("La fecha: "+ fecha+" hasta la fecha " + fechaFinal + " se encuentra reservada");
@@ -219,22 +219,45 @@ public class ProductoService implements IProductoService {
             }
         }
         return true;
-        }*/
+        }
 
 
    @Override
-    public ProductoSalidaDto buscarProductoDisponible(ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
-        Producto productoBuscado = productoRepository.findByUbicacion(productoDisponibleEntradaDto.getUbicacionP());
+    public List<ProductoSalidaDto> buscarProductoDisponible(ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException {
+       //Producto productoBuscado = productoRepository.findByUbicacion(productoDisponibleEntradaDto.getUbicacionP());
+        String ubicacionP = productoDisponibleEntradaDto.getUbicacionP();
         LocalDate fechaInicio = productoDisponibleEntradaDto.getFechaInicio();
         LocalDate fechaFinal = productoDisponibleEntradaDto.getFechaFinal();
 
-        ProductoSalidaDto productoDisponibleSalidaDto= null;
+        List<Producto> productosBuscados;
+        List<ProductoSalidaDto> productosDisponibles = new ArrayList<>();
+
+      /*  ProductoSalidaDto productoDisponibleSalidaDto= null;
 
         List<LocalDate> fechaBuscada= new ArrayList<>();
 
-        List<LocalDate>fechasReservadas= productoBuscado.getFechasReservadas();
+        List<LocalDate>fechasReservadas= productosBuscados.getFechasReservadas();
+*/
+       if (ubicacionP == null ) {
+           productosBuscados = productoRepository.findAll();
+       } else {
+           productosBuscados = productoRepository.findAllByUbicacionContaining(ubicacionP);
+       }
 
-        if (productoBuscado != null){
+       for (Producto producto : productosBuscados) {
+           if (ChronoUnit.DAYS.between(fechaInicio, fechaFinal) < 2) {
+               LOGGER.error("La fecha de reserva debe ser mayor a 48hs");
+               throw new ResourceNotFoundException("La fecha de reserva debe ser mayor a 48hs");
+           } else if (buscadorProductoPorFecha(producto, fechaInicio, fechaFinal)) {
+               productosDisponibles.add(entidadADto(producto));
+           } else {
+               LOGGER.info("El producto " + producto.getUbicacion() + " no se encuentra disponible en esa fecha");
+           }
+       }
+       return productosDisponibles;
+   }
+
+     /*   if (ubicacion != null){
             if (fechaFinal.compareTo(fechaInicio) >= 2) {
                 while (!fechaInicio.isAfter(fechaFinal)) {
                     fechaBuscada.add(fechaInicio);
@@ -248,7 +271,7 @@ public class ProductoService implements IProductoService {
                     }
                 }
                 LOGGER.info("El producto se encuentra disponible para reservar en las fechas:" + fechaBuscada);
-                productoDisponibleSalidaDto = entidadADto(productoBuscado);
+                productoDisponibleSalidaDto = entidadADto(productosBuscados);
             } else {
                 LOGGER.error("La fecha de reserva debe ser mayor a 48hs");
                 throw  new ResourceNotFoundException("La fecha de reserva debe ser mayor a 48hs");
@@ -259,7 +282,7 @@ public class ProductoService implements IProductoService {
             throw  new ResourceNotFoundException("El producto no existe en la BDD");
         }
         return productoDisponibleSalidaDto;
-    }
+    }*/
 
 
 

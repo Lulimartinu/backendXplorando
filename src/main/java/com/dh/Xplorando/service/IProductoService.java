@@ -20,7 +20,7 @@ public interface IProductoService {
     ProductoSalidaDto buscarProductoPorNombre(ProductoEntradaDto productoEntradaDto) throws ResourceNotFoundException;
     ProductoSalidaDto buscarProductoPorUbicacion(ProductoEntradaDto productoEntradaDto) throws  ResourceNotFoundException;
 
-    ProductoSalidaDto buscarProductoDisponible (ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException;
+    List<ProductoSalidaDto> buscarProductoDisponible (ProductoDisponibleEntradaDto productoDisponibleEntradaDto) throws ResourceNotFoundException;
 
 
 

@@ -17,7 +17,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
   // Optional<Producto> findById(Long productoId);
 
-
+    List<Producto> findAllByUbicacionContaining(String ubicacion);
     //Optional<List<Producto>> findProductoXFechas(LocalDate fechaInicio, LocalDate fechaFinal, Long id);
 
 }
