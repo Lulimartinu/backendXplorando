@@ -28,7 +28,8 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("http://localhost:5175");
         config.addAllowedOrigin("http://127.0.0.1:5173/");
-
+        config.addAllowedOrigin("http://localhost:5175");
+        config.addAllowedOrigin("http://localhost:5175/");
 
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
@@ -44,5 +45,7 @@ public class CorsConfig {
         FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
         bean.setOrder(CORS_FILTER_ORDER);
         return bean;
+
+
     }
 }
